@@ -91,7 +91,7 @@ def RunnerBayesian(values,times, change=True,PP=False, name=False, k=[1,2,3],
     R[R==-1]=np.nan
     if PP:
         RT=Rest.stack()
-        R=np.concatenate([R,RT])
+        R=pd.concat([R,RT])
     if fulloutput:
         return models, Res, Rest 
     if name:
@@ -237,6 +237,9 @@ def FeatureBayes2(modelA, obsdays, obsvalue, freq=365,PP=True, Event=False,reps=
             ft=pred0t.iloc[:,yeart==year].values
             ftt=YY[yeart==year]
             if PP:
+                if (yeart==year).sum()< 3: 
+                    Rest.append((np.nan,np.nan,np.nan))
+                    continue
                 M=ft.mean(axis=1)
                 Mm=M.mean()
                 STD=ft.std(axis=1)
@@ -256,9 +259,10 @@ def FeatureBayes2(modelA, obsdays, obsvalue, freq=365,PP=True, Event=False,reps=
                 try:
                     temp=(-stat).argmax(axis=1)
                 except ValueError:
-                    print(stat)
-                    print(ft)
-                    print(t,YY)
+                    #print(stat)
+                    #print(ft)
+                    #print(t,YY)
+                    pass
                 #print(daystoobsY.shape,temp.max())
                 eventf=tt[temp]
                 res.append(pd.Series([eventf.mean()-(year*freq),eventf.std()], name="event", index=["mean","sd"]))
