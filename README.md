@@ -1,5 +1,5 @@
 # PPresil-BM
-##Overal description
+## Overal description
 Bayesian Harmonic  model for time series. 
 For each year the program choose using Bayesian Factors among:
   
@@ -10,8 +10,13 @@ For each year the program choose using Bayesian Factors among:
  
 Using the fitted model the program extract several yearly seasonal statistics and a single interyear standard variation statistics and their standard errors. 
 In alternative is possible to obtain also the fitted value of the model with relative standard error  
+## Software dependency
+The code is writte in Python 3.6 and  
+requires the following packages available on pypi: xarray, pandas, numpy, rasterio, sklearn, patsy, scipy  
+requires the following package avalable on github: linear_model (https://github.com/asherbender/bayesian-linear-model)
+optionally for the drawing of graph and using this program as a library it requires: seaborn
 
-##The annual statistics
+## The annual statistics
 The 3 annual statistics are estimated as default:   
 
 - Annual Mean
