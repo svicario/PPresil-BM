@@ -1,0 +1,17 @@
+{
+  "image": "iiaphylogenetic/docker-ppresil-BM",
+  "resources": {
+    "memory_mb": "5000",
+    "cpu_units": ""
+	},
+  "container": {
+    "entryPoint": [
+      "/bin/bash",
+      "-c"
+	],
+    "command": [
+      "python3 ./PPresil-service.py"
+	]
+  }
+}
+

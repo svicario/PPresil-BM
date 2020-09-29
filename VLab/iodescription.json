@@ -1,0 +1,92 @@
+{
+  "inputs": [
+    {
+      "id": "DataStack",
+      "inputType": "array",
+      "valueType": "value",
+      "description": "Time series of vegetation index. Format is expected to be multilayer envi, tif or single variable netcdf file. The band name need to have time information",
+      "name": "Input archive URL",
+      "obligation": true,
+      "hasDefault": false,
+      "valueSchema": "url",
+      "target": "DataInput/"
+    },
+    {
+      "id": "BoundingBox",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "Bounding Box with order west,south,east,north",
+      "name": "Bounding Box",
+      "obligation": false,
+      "hasDefault": false,
+      "valueSchema": "bbox",
+    },
+    {
+      "id": "change",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "The model would assume changes in seasonality across years beyond the mean, true or false",
+      "name": "Yearly change",
+      "obligation": false,
+      "hasDefault": false,
+      "valueSchema": "string_parameter",
+    },
+    {
+      "id": "Event",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "The model would register time and effect of larger change within the year, true or false",
+      "name": "Yearly Event",
+      "obligation": false,
+      "hasDefault": true,
+      "defaultValue": false,
+      "valueSchema": "string_parameter",
+    },
+    {
+      "id": "Expected",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "The model would output only expected values and estimated errors, true or false",
+      "name": "Output Expected Value",
+      "obligation": false,
+      "hasDefault": true,
+      "defaultValue": false,
+      "valueSchema": "string_parameter",
+    },
+    {
+      "id": "freqsubsample",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "Temporal frequency using by the model to estimate correct output",
+      "name": "Temporal Frequency of model sampling",
+      "obligation": false,
+      "hasDefault": true,
+      "defaultValue": false,
+      "valueSchema": "string_parameter",
+    },
+    ,
+    {
+      "id": "dense",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "Model should not use information from others years to fit data of a given year, true or false",
+      "name": "Sufficently dense data across years",
+      "obligation": false,
+      "hasDefault": true,
+      "defaultValue": false,
+      "valueSchema": "string_parameter",
+    },
+    
+  ],
+  "outputs": [
+    {
+      "id": "Output_archive_PPresil",
+      "outputType": "individual",
+      "valueType": "value",
+      "description": "Output image in ENVI format showing Time Series Statistics. First 3 layers are the Ecological Functional Attributes.\\n pvalue and Rsq are the significance and the explained variance of the Harmonic model. Liupvalue is the probability that the residual have autocorrelated signal",
+      "name": "Output image",
+      "valueSchema": "url",
+      "target": "./Output.zip"
+    }
+  ]
+}
