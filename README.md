@@ -14,6 +14,8 @@ In alternative is possible to obtain also the fitted value of the model with rel
 The code is writte in Python 3.6 and  
 requires the following packages available on pypi: xarray, pandas, numpy, rasterio, sklearn, patsy, scipy  
 requires the following package avalable on github: linear_model (https://github.com/asherbender/bayesian-linear-model)
+here linear_model.py is already included with change to pass python3 
+
 optionally for the drawing of graph and using this program as a library it requires: seaborn
 
 ## The annual statistics

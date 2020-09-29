@@ -76,6 +76,17 @@
       "defaultValue": false,
       "valueSchema": "string_parameter",
     },
+    {
+      "id": "suffix",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "name file of output",
+      "name": "Suffix output",
+      "obligation": false,
+      "hasDefault": true,
+      "defaultValue": "Output",
+      "valueSchema": "string_parameter",
+    }
     
   ],
   "outputs": [
