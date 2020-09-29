@@ -64,7 +64,6 @@
       "defaultValue": false,
       "valueSchema": "string_parameter",
     },
-    ,
     {
       "id": "dense",
       "inputType": "individual",
