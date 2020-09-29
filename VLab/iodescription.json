@@ -28,7 +28,8 @@
       "description": "The model would assume changes in seasonality across years beyond the mean, true or false",
       "name": "Yearly change",
       "obligation": false,
-      "hasDefault": false,
+      "hasDefault": true,
+       "defaultValue": true,
       "valueSchema": "string_parameter"
     },
     {

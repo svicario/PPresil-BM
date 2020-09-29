@@ -991,17 +991,21 @@ if "__main__"==__name__:
     parser.add_argument("--netcdf", action="store_true", help="if option n is used, ask for final output as netcdf and not naked array in memory map file")
     parser.add_argument("--minmaxFeat", dest="minmaxFeat",action="store_true", help="add to summary statistics min and max value and min position")
     parser.add_argument("--small", dest="small",action="store_true", help="save on single file even of option n was used")
+    parser.add_argument("--bbox", dest="bbox",action="store", help="bounding box in the form west,south,east,north with unit as defined in input file CRS")
     
     T0=time.time()
     ARG=parser.parse_args()
+    west=south=east=north=None
+    if bbox:
+        west,south,east,north=ARG.bbox.split(",")
     if ARG.inputfile.split(".")[-1]=="nc":
         opener=xr.open_dataarray
     else: opener=xr.open_rasterio
-    A=opener(ARG.inputfile)
+    A=opener(ARG.inputfile).loc[:,north:south,west:east]
     Time, Y, X=A.dims
     if ARG.dask:
         DICT={Time:-1,Y:ARG.Step,X:ARG.Step}
-        A=opener(ARG.inputfile).chunk(DICT)
+        A=opener(ARG.inputfile).loc[:,north:south,west:east].chunk(DICT)
     
     if ARG.n is not None:
         from itertools import count, product
