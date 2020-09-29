@@ -166,7 +166,7 @@ def SingleModel(t,YY,freq,k=[1,2,3], BFT=1.6, poly=False, offset=0):
     
     return ModelList(models, offset=offset), [],[]
 
-def MonoModel(t,YY,freq,k=[1,2,3], BFT=1.6, YAM=True):
+def MonoModel(t,YY,freq,k=[1,2,3], BFT=1.6, YAM=True, offset=0):
     """
     Use a YAM ( Year Anomaly model ) across all years
     """
@@ -987,8 +987,8 @@ if "__main__"==__name__:
     parser.add_argument("--dense", action="store_true", help="assume that time series is dense and each year can be fitted with its own seasonality model" )
     parser.add_argument("--freqsubsample",type=int, action="store", help=" frequency of sampling from model in days used in order to estimate phemolgical statistics" )
     parser.add_argument("--reps",default=500, type=int,dest="reps",action="store", help="replicated of model sampling in order to estimate standard variation of prediction")
-    parser.add_argument("--dask", action="store_true", help="replicated of model sampling in order to estimate standard variation of prediction")
-    parser.add_argument("--netcdf", action="store_true", help="replicated of model sampling in order to estimate standard variation of prediction")
+    parser.add_argument("--dask", action="store_true", help="perform calculation using dask functionality and not numpy")
+    parser.add_argument("--netcdf", action="store_true", help="if option n is used, ask for final output as netcdf and not naked array in memory map file")
     parser.add_argument("--minmaxFeat", dest="minmaxFeat",action="store_true", help="add to summary statistics min and max value and min position")
     parser.add_argument("--small", dest="small",action="store_true", help="save on single file even of option n was used")
     
