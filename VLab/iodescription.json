@@ -29,7 +29,7 @@
       "name": "Yearly change",
       "obligation": false,
       "hasDefault": false,
-      "valueSchema": "string_parameter",
+      "valueSchema": "string_parameter"
     },
     {
       "id": "Event",
