@@ -10,7 +10,7 @@
       "-c"
 	],
     "command": [
-      "python3 ./PPresil-service.py"
+      "python3 ./VlabRunner.py"
 	]
   }
 }
