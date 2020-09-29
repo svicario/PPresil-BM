@@ -19,7 +19,7 @@
       "name": "Bounding Box",
       "obligation": false,
       "hasDefault": false,
-      "valueSchema": "bbox",
+      "valueSchema": "bbox"
     },
     {
       "id": "change",
@@ -40,7 +40,7 @@
       "obligation": false,
       "hasDefault": true,
       "defaultValue": false,
-      "valueSchema": "string_parameter",
+      "valueSchema": "string_parameter"
     },
     {
       "id": "Expected",
@@ -51,7 +51,7 @@
       "obligation": false,
       "hasDefault": true,
       "defaultValue": false,
-      "valueSchema": "string_parameter",
+      "valueSchema": "string_parameter"
     },
     {
       "id": "freqsubsample",
@@ -62,7 +62,7 @@
       "obligation": false,
       "hasDefault": true,
       "defaultValue": false,
-      "valueSchema": "string_parameter",
+      "valueSchema": "string_parameter"
     },
     {
       "id": "dense",
@@ -73,7 +73,7 @@
       "obligation": false,
       "hasDefault": true,
       "defaultValue": false,
-      "valueSchema": "string_parameter",
+      "valueSchema": "string_parameter"
     },
     {
       "id": "suffix",
@@ -84,7 +84,7 @@
       "obligation": false,
       "hasDefault": true,
       "defaultValue": "Output",
-      "valueSchema": "string_parameter",
+      "valueSchema": "string_parameter"
     }
     
   ],
