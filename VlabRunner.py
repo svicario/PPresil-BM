@@ -18,7 +18,9 @@ print("ARG")
 print(ARG)
 arg=""
 for k,v in ARG.items():
-    if v:
+    if (v is False)|(v in ["False","false","F"]):
+        continue
+    else:
         if (v is True)|(v=="true"):
             v=""
         arg+=" --"+" ".join([k,str(v)])
