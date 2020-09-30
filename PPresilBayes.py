@@ -94,6 +94,9 @@ def RunnerBayesian(values,times, change=True,PP=False, name=False, k=[1,2,3],
         models, evidences, check=Model(times,VValues,freq=freq, k=k,BFT=BFT, offset=offset)
     except:
         #to handle nan-only columns
+        print("hai")
+        print(times)
+        print(VValues)
         return np.array([np.nan]*Loutput)
     modelA=models
     if Expected:
@@ -350,6 +353,8 @@ def FeatureBayes2(modelA, obsdays, obsvalue, freq=365,PP=True, Event=False,reps=
         ffmaxpos=ff-year*freq
         #provo con media circolare
         res.append(pd.Series([circmean(ffmaxpos, high=365,low=0),circvar(ffmaxpos, high=365,low=0)**0.5], name="maxpos", index=["mean","sd"]))
+        #correzione grezza per na che appaiano nel mucchio
+        res[-1][pd.isnull]=-1
         ##forse sostituire mean con median per dare risultati sensati in casi di più di un picco.
         #res.app end(pd.Series([ffmaxpos.mean(),ffmaxpos.std()], name="maxpos", index=["mean","sd"]))
         if minmaxFeat:
@@ -997,11 +1002,12 @@ if "__main__"==__name__:
     ARG=parser.parse_args()
     west=south=east=north=None
     if ARG.bbox:
-        west,south,east,north=ARG.bbox.split(",")
+        west,south,east,north=map(int,ARG.bbox.split(","))
     if ARG.inputfile.split(".")[-1]=="nc":
         opener=xr.open_dataarray
     else: opener=xr.open_rasterio
     A=opener(ARG.inputfile).loc[:,north:south,west:east]
+    print(A)
     Time, Y, X=A.dims
     if ARG.dask:
         DICT={Time:-1,Y:ARG.Step,X:ARG.Step}
