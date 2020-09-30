@@ -996,7 +996,7 @@ if "__main__"==__name__:
     T0=time.time()
     ARG=parser.parse_args()
     west=south=east=north=None
-    if bbox:
+    if ARG.bbox:
         west,south,east,north=ARG.bbox.split(",")
     if ARG.inputfile.split(".")[-1]=="nc":
         opener=xr.open_dataarray
