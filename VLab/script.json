@@ -11,7 +11,7 @@
       "pathType": "FILE"
     },
     {
-      "repoPath": "linear_mode.py",
+      "repoPath": "linear_model.py",
       "targetPath": "linear_model.py",
       "pathType": "FILE"
     }
