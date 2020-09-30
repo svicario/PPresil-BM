@@ -27,7 +27,7 @@ for k,v in ARG.items():
 
 print("arguments")
 print(arg)
-subprocess.run(["python3", "PPresilBayes.py","--input",inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
+subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
 
 
 subprocess.run(["zip","Output.zip",ARG["suffix"]+".nc"])
