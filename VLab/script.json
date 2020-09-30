@@ -1,8 +1,18 @@
 {
   "scripts": [
     {
-      "repoPath": "PPresil-service.py",
-      "targetPath": "PPresil-service.py",
+      "repoPath": "VlabRunner.py",
+      "targetPath": "VlabRunner.py",
+      "pathType": "FILE"
+    },
+    {
+      "repoPath": "PPresilBayes.py",
+      "targetPath": "PPresilBayes.py",
+      "pathType": "FILE"
+    },
+    {
+      "repoPath": "linear_mode.py",
+      "targetPath": "linear_model.py",
       "pathType": "FILE"
     }
   ]
