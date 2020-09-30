@@ -19,7 +19,7 @@ print(ARG)
 arg=""
 for k,v in ARG.items():
     if v:
-        if v is True:
+        if (v is True)|(v=="true"):
             v=""
         arg+=" --"+" ".join([k,str(v)])
 
