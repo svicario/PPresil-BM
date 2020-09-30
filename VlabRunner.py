@@ -14,6 +14,7 @@ except IndexError:
     print("Input file should have extension name tif, nc or envi")
 
 ARG=json.load(open("vlabparams.json","r"))
+print("ARG")
 print(ARG)
 arg=""
 for k,v in ARG.items():
@@ -22,6 +23,8 @@ for k,v in ARG.items():
             v=""
         arg+=" --"+" ".join([k,str(v)])
 
+print("arguments")
+print(arg)
 print(subprocess.run(["python3", "PPresilBayes.py","--input",inputfile]+arg.split(),stdout=subprocess.PIPE).stdout)
 
 
