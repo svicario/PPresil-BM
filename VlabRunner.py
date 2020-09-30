@@ -2,7 +2,8 @@ import subprocess
 import os
 import json
 
-
+print(os.listdir("./DataInput")")
+print(os.listdir("./")")
 subprocess.run(["unzip","./DataInput/"]+os.listdir("./DataInput")[0])
 
 try:
