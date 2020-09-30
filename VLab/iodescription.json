@@ -2,14 +2,14 @@
   "inputs": [
     {
       "id": "DataStack",
-      "inputType": "array",
+      "inputType": "individual",
       "valueType": "value",
       "description": "Time series of vegetation index. Format is expected to be multilayer envi, tif or single variable netcdf file. The band name need to have time information",
       "name": "Input archive URL",
       "obligation": true,
       "hasDefault": false,
       "valueSchema": "url",
-      "target": "DataInput/"
+      "target": "DataInput.zip"
     },
     {
       "id": "BoundingBox",
