@@ -110,7 +110,7 @@ def RunnerBayesian(values,times, change=True,PP=False, name=False, k=[1,2,3],
         if fulloutput:
             return temp, models
         return temp
-    Res, Rest=FeatureBayes2(modelA, obsdays=times, obsvalue=values, freq=freq,PP=PP, Event=Event,reps=reps,freqsubsample=freqsubsample, YearsL=fullyear, offset=offset, minmaxFeat=minmaxFeat)
+    Res, Rest=FeatureBayes3(modelA, obsdays=times, obsvalue=values, freq=freq,PP=PP, Event=Event,reps=reps,freqsubsample=freqsubsample, YearsL=fullyear, offset=offset, minmaxFeat=minmaxFeat)
     R=Res.stack()
     R[R==-1]=np.nan
     if PP:
@@ -260,6 +260,138 @@ def MultiModel(t,YY,freq=365, k=[1,2,3],BFT=1.6, offset=0):
     evidences=[np.concatenate(evidences, axis=0)]
     evidences=evidences[0][1:]
     return ModelList(models, offset=offset), evidences, (eviss,evits, evifs, cont)
+def FeatureBayes3(modelA, obsdays, obsvalue, freq=365,PP=True, Event=False,reps=100,freqsubsample=5, YearsL=None, offset=0, minmaxFeat=False):
+    """
+    Extract 4 descriptors of the time series from a model or multiyear model and perfrom a PP test of goodness of fit 
+    """
+
+    t=obsdays
+    YY=obsvalue
+    Years=np.ceil(t.max()/freq).astype("int")
+    freqsubsample=freqsubsample
+    
+    daystoobs=np.arange(0,Years*freq, freqsubsample)
+    X=modelA._BayesianLinearModel__basis(daystoobs)
+    
+    try:
+        params=Randomizer(modelA,daystoobs,reps)
+        #modelA._predict_mean
+    except ValueError:
+        print(obsvalue)
+    
+    #Dati attesi per la frequenza di osservazione ideale
+    pred0=pd.DataFrame(np.nansum(X[:,np.newaxis,:]*params,axis=2).T)
+    Res=[]
+    Rest=[]
+    varyear=0
+    meansdyear=[]
+    totdays=pred0.shape[1]
+    year=0
+    #Statistiche sulle date realmente osservati
+    if PP or Event:
+        X=modelA._BayesianLinearModel__basis(t)
+        #pred0t=pd.DataFrame(np.array([np.nansum(X*Randomizer(modelA,t),axis=1) for x in np.arange(reps)]))
+        paramst=Randomizer(modelA,t,reps)
+        pred0t=pd.DataFrame(np.nansum(X[:,np.newaxis,:]*paramst,axis=2).T)
+        #pred0t=pred0.iloc[:,t-1]
+        yeart=((t+offset)/freq).astype("int")
+    #giorni idealmente osservati
+    yearobs=((daystoobs+offset)/freq).astype("int")
+    for year in np.arange(Years):
+        def Loadingres(name, index, value, year=year,Res=Res):
+            Res.append([name, index,str(year), value])
+        #valori idealmente osservato in un dato anno
+        f=pred0.iloc[:,yearobs==year].values
+        daystoobsY=daystoobs[yearobs==year]
+        # or Event?
+        if PP or Event:
+            ft=pred0t.iloc[:,yeart==year].values
+            if PP:
+                ftt=YY[yeart==year]
+                if (yeart==year).sum()< 3: 
+                    Rest.append((np.nan,np.nan,np.nan))
+                    continue
+                M=ft.mean(axis=1)
+                Mm=M.mean()
+                STD=ft.std(axis=1)
+                STDm=STD.mean()
+                argMAX=ft.argmax(axis=1)
+                argMAXm=argMAX.mean()
+                rest=((np.abs(M-Mm)>=np.abs(ftt.mean()-Mm)).sum(),
+                      (np.abs(STD-STDm)>=np.abs(ftt.std()-STDm)).sum(),(np.abs(argMAX-argMAXm)>=np.abs(ftt.argmax()-argMAXm)).sum())
+                Rest.append(rest)
+            if Event:
+                #in caso di due sole osservazioni in un anno meglio saltare
+                if (yeart==year).sum()< 3: 
+                    Loadingres(name="Mevent",index="mean",value=np.na)
+                    Loadingres(name="Mevent",index="sd",value=np.na)
+                    continue
+                tt=t[yeart==year]
+                stat=np.diff(ft,axis=1)/np.diff(tt)
+                try:
+                    temp=(-stat).argmax(axis=1)
+                except ValueError:
+                    pass
+                #average between the two date for which difference was estimated
+                eventf=(tt[temp]+tt[temp+1])/2
+                Loadingres(name="Mevent",index="mean",value=eventf.mean()-(year*freq))
+                Loadingres(name="Mevent",index="sd",value=eventf.std())
+            
+        if Event:
+            stat=np.diff(f,axis=1)
+            temp=(-stat).argmax(axis=1)
+            MaxTemp=(-stat).max(axis=1)
+            eventf=(daystoobsY[temp]+daystoobsY[temp+1])/2
+            Loadingres(name="event",index="mean",value=eventf.mean()-(year*freq))
+            Loadingres(name="event",index="sd",value=eventf.std())
+            Loadingres(name="eventVal",index="mean",value=MaxTemp.mean())
+            Loadingres(name="eventVal",index="sd",value=MaxTemp.std())
+
+        ff=f.mean(axis=1)
+        meansdyear.append(ff)
+        Loadingres(name="mean",index="mean",value=ff.mean())
+        Loadingres(name="mean",index="sd",value=ff.std())
+        
+        ff=f.std(axis=1)
+        Loadingres(name="stdintra",index="mean",value=ff.mean())
+        Loadingres(name="stdintra",index="sd",value=ff.std())
+        varyear+=(ff**2)*f.shape[1]/totdays
+        
+        ff=daystoobsY[f.argmax(axis=1)]
+        ffmaxpos=ff-year*freq
+        Loadingres(name="maxpos",index="mean",value=circmean(ffmaxpos, high=365,low=0))
+        Loadingres(name="maxpos",index="meanmean",value=ffmaxpos.mean())
+        Loadingres(name="maxpos",index="sd",value=circvar(ffmaxpos, high=365,low=0)**0.5)
+        
+        if minmaxFeat:
+            fval=f.max(axis=1)
+            Loadingres(name="maxposVal",index="mean",value=fval.mean())
+            Loadingres(name="maxposVal",index="sd",value=fval.std())
+            
+            ffmin=daystoobsY[(-f).argmax(axis=1)]
+            ffminpos=ffmin-year*freq
+            Loadingres(name="minpos",index="mean",value=circmean(ffminpos, high=365,low=0))
+            Loadingres(name="minpos",index="sd",value=circvar(ffminpos, high=365,low=0)**0.5)
+
+            fval=f.min(axis=1)
+            Loadingres(name="minposVal",index="mean",value=fval.mean())
+            Loadingres(name="minposVal",index="sd",value=fval.std())
+    
+    varinter=(np.var(pred0.values,axis=1)-varyear)**0.5
+
+    Loadingres(name="sdinter",index="mean",year="all",value=varinter.mean())
+    Loadingres(name="sdinter",index="sd",year="all",value=varinter.std())
+
+    meansdinter=(np.concatenate([x[np.newaxis] for x in meansdyear])).std(axis=1)
+    Loadingres(name="sdinterm",index="mean",year="all",value=meansdinter.mean())
+    Loadingres(name="sdinterm",index="sd",year="all",value=meansdinter.std())
+    Res=pd.DataFrame(Res)
+    Res.columns=["stat","index","year","value"]
+    Res=Res.set_index(["stat","index","year"])["value"]
+    if PP:
+        Rest=pd.DataFrame(Rest,columns=["mean","stdintra","maxPos"], index=np.arange(Years).astype("U2"))
+        Rest=Rest/reps
+    return Res, Rest
 
 def FeatureBayes2(modelA, obsdays, obsvalue, freq=365,PP=True, Event=False,reps=100,freqsubsample=5, YearsL=None, offset=0, minmaxFeat=False):
     """
@@ -997,6 +1129,7 @@ if "__main__"==__name__:
     parser.add_argument("--minmaxFeat", dest="minmaxFeat",action="store_true", help="add to summary statistics min and max value and min position")
     parser.add_argument("--small", dest="small",action="store_true", help="save on single file even of option n was used")
     parser.add_argument("--bbox", dest="bbox",action="store", help="bounding box in the form west,south,east,north with unit as defined in input file CRS")
+    parser.add_argument("--graph", dest="bbox_true",action="store", help="output also a graphic visualization of results")
     
     T0=time.time()
     ARG=parser.parse_args()
@@ -1048,5 +1181,9 @@ if "__main__"==__name__:
             storefm(BDGBM,ARG)
     else:
         BDGBM.Store(ARG.suffix)
+    if ARG.graph:
+        from matplotlib import pyplot as plt
+        BDGBM.Data["stdinter_mean"].plot()
+        plt.savefig("stdinter_mean.png")
 
 
