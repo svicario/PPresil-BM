@@ -111,8 +111,9 @@ def RunnerBayesian(values,times, change=True,PP=False, name=False, k=[1,2,3],
             return temp, models
         return temp
     Res, Rest=FeatureBayes3(modelA, obsdays=times, obsvalue=values, freq=freq,PP=PP, Event=Event,reps=reps,freqsubsample=freqsubsample, YearsL=fullyear, offset=offset, minmaxFeat=minmaxFeat)
-    R=Res.stack()
-    R[R==-1]=np.nan
+    #R=Res.stack()
+    #R[R==-1]=np.nan
+    R=Res
     if PP:
         RT=Rest.stack()
         R=pd.concat([R,RT])
