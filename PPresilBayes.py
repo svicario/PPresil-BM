@@ -1123,7 +1123,7 @@ if "__main__"==__name__:
     parser.add_argument("--Event", dest="Event",action="store_true", help="store the date and value of the maximum change within each year")
     parser.add_argument("--PP", action="store_true" ,help="perform Posterior predictive test [experimental]")
     parser.add_argument("--dense", action="store_true", help="assume that time series is dense and each year can be fitted with its own seasonality model" )
-    parser.add_argument("--freqsubsample",type=int, action="store", help=" frequency of sampling from model in days used in order to estimate phemolgical statistics" )
+    parser.add_argument("--freqsubsample",type=int, action="store",default=15, help=" frequency of sampling from model in days used in order to estimate phemolgical statistics" )
     parser.add_argument("--reps",default=500, type=int,dest="reps",action="store", help="replicated of model sampling in order to estimate standard variation of prediction")
     parser.add_argument("--dask", action="store_true", help="perform calculation using dask functionality and not numpy")
     parser.add_argument("--netcdf", action="store_true", help="if option n is used, ask for final output as netcdf and not naked array in memory map file")
