@@ -31,7 +31,8 @@
       "obligation": false,
       "hasDefault": true,
       "defaultValue": false,
-      "valueSchema": "url"
+      "valueSchema": "url",
+      "target": "mask.zip"
     },
     {
       "id": "change",
