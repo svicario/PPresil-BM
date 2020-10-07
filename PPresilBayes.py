@@ -1158,26 +1158,43 @@ if "__main__"==__name__:
     
     T0=time.time()
     ARG=parser.parse_args()
+    
+    #Define BBox
     west=south=east=north=None
     if ARG.bbox:
         west,south,east,north=map(int,ARG.bbox.split(","))
+    #Define opener
     if ARG.inputfile.split(".")[-1]=="nc":
         opener=xr.open_dataarray
     else: opener=xr.open_rasterio
+    
+    # open file with bbox
     A=opener(ARG.inputfile).loc[:,north:south,west:east]
     
+    #Correct dimension name
+    Time, Y, X=A.dims
+    if Time=="band":
+        DICT[Time]="Time"
+    if X in ["x", "longitude", "Longitude"]:
+        DICT[X]="X"
+    if Y in ["y", "latitude", "Latitude"]:
+        DICT[Y]="Y"
+    A=A.rename(DICT)
+        #Apply mask
     if ARG.mask:
+        #I use HarmBayMod to format CRS and apply mask correctly using salem
         BDGBM=HarmBayMod(A, reformat_dict={"nan":-32768,"maxvalues":10000}, bandNameFormatter=lambda y:pd.Series([pd.to_datetime(x.split("_")[0]) for x in y]))
         import geopandas as gpd
         import salem
         V=gpd.read_file(ARG.mask)
         Z=BDGBM.RawData.salem.grid.region_of_interest(geometry=V.geometry[0])
-        A=BDGBM.RawData.where(Z)
-    print(A)
-    Time, Y, X=A.dims
+    #re-open if chunking is needed
     if ARG.dask:
         DICT={Time:-1,Y:ARG.Step,X:ARG.Step}
-        A=opener(ARG.inputfile).loc[:,north:south,west:east].chunk(DICT)
+        A=opener(ARG.inputfile).loc[:,north:south,west:east].where(Z).chunk(DICT)
+    else:
+        A=A.where(Z)
+    print(A)
     
     if ARG.n is not None:
         from itertools import count, product
@@ -1192,13 +1209,7 @@ if "__main__"==__name__:
         A=A[:,nn:min((nn+Step),N),mm:min((mm+Step),M)]
         print(nn,mm,Step, A.shape)
     DICT={}
-    if Time=="band":
-        DICT[Time]="Time"
-    if X in ["x", "longitude", "Longitude"]:
-        DICT[X]="X"
-    if Y in ["y", "latitude", "Latitude"]:
-        DICT[Y]="Y"
-    A=A.rename(DICT)
+
     BDGBM=HarmBayMod(A, reformat_dict={"nan":-32768,"maxvalues":10000}, bandNameFormatter=lambda y:pd.Series([pd.to_datetime(x.split("_")[0]) for x in y]))
     #Get all options on model 
     BDGBM.__dict__.update(ARG.__dict__)
