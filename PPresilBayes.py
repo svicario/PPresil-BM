@@ -1173,6 +1173,7 @@ if "__main__"==__name__:
     
     #Correct dimension name
     Time, Y, X=A.dims
+    DICT={}
     if Time=="band":
         DICT[Time]="Time"
     if X in ["x", "longitude", "Longitude"]:
@@ -1187,13 +1188,16 @@ if "__main__"==__name__:
         import geopandas as gpd
         import salem
         V=gpd.read_file(ARG.mask)
+        VV=V.to_crs(BDGBM.RawData.pyproj_srs)
+        BB=VV.bounds
         Z=BDGBM.RawData.salem.grid.region_of_interest(geometry=V.geometry[0])
-    #re-open if chunking is needed
+        Z=Z.loc[BB.maxy[0]:BB.miny[0],BB.minx[0]:BB.maxx[0]]
+        A=A.loc[:,BB.maxy[0]:BB.miny[0],BB.minx[0]:BB.maxx[0]].where(Z)
+    
+    #chunking if needed
     if ARG.dask:
         DICT={Time:-1,Y:ARG.Step,X:ARG.Step}
-        A=opener(ARG.inputfile).loc[:,north:south,west:east].where(Z).chunk(DICT)
-    else:
-        A=A.where(Z)
+        A=A.chunk(DICT)
     print(A)
     
     if ARG.n is not None:
@@ -1208,7 +1212,7 @@ if "__main__"==__name__:
                 nn,mm=next(G)
         A=A[:,nn:min((nn+Step),N),mm:min((mm+Step),M)]
         print(nn,mm,Step, A.shape)
-    DICT={}
+    
 
     BDGBM=HarmBayMod(A, reformat_dict={"nan":-32768,"maxvalues":10000}, bandNameFormatter=lambda y:pd.Series([pd.to_datetime(x.split("_")[0]) for x in y]))
     #Get all options on model 
