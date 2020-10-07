@@ -113,9 +113,6 @@ def RunnerBayesian(values,times, change=True,PP=False, name=False, k=[1,2,3],
         models, evidences, check=Model(times,VValues,freq=freq, k=k,BFT=BFT, offset=offset)
     except:
         #to handle nan-only columns
-        print("hai")
-        print(times)
-        print(VValues)
         return np.array([np.nan]*Loutput)
     modelA=models
     if Expected:
@@ -629,12 +626,19 @@ class HarmBayMod(object):
             assert (mx==my)&(mx==0), "no rotation expected"
             #CRS
             #double conversion to handle wkt that have missing point in the non geometric description
-            try:
-                crs=CRS(CRS(self.RawData.attrs["coordinate_system_string"]).to_proj4())
-                self.crs=crs.to_wkt()
-                self.RawData.attrs["pyproj_srs"]=crs.to_epsg()
-            except KeyError:
-                self.crs=""
+            crs=None
+            for crs_attr in [k  for k in self.RawData.attrs.keys() if k in ["spatial_ref","coordinate_system_string","crs_wkt","crs"]]:
+                crs=CRS(CRS(self.RawData.attrs[crs_attr]).to_proj4())
+                break
+            if (not crs):
+                if ("crs" in self.RawData.coords):
+                    for crs_attr in [k  for k in self.RawData.crs.attrs.keys() if k in ["spatial_ref","coordinate_system_string","crs_wkt"]]:
+                        crs=CRS(CRS(self.RawData.attrs[crs_attr]).to_proj4())
+                        break
+                else:
+                    self.crs=""
+            self.crs=crs.to_wkt()
+            self.RawData.attrs["pyproj_srs"]="epsg:"+str(crs.to_epsg())
         else:
             self.transform=np.array([0]*6)
             self.crs=""
@@ -1149,7 +1153,8 @@ if "__main__"==__name__:
     parser.add_argument("--minmaxFeat", dest="minmaxFeat",action="store_true", help="add to summary statistics min and max value and min position")
     parser.add_argument("--small", dest="small",action="store_true", help="save on single file even of option n was used")
     parser.add_argument("--bbox", dest="bbox",action="store", help="bounding box in the form west,south,east,north with unit as defined in input file CRS")
-    parser.add_argument("--graph", dest="bbox_true",action="store", help="output also a graphic visualization of results")
+    parser.add_argument("--graph", dest="graph",action="store", help="output also a graphic visualization of results")
+    parser.add_argument("--mask", dest="mask",action="store", help="mask input with a shapefile")
     
     T0=time.time()
     ARG=parser.parse_args()
@@ -1160,6 +1165,14 @@ if "__main__"==__name__:
         opener=xr.open_dataarray
     else: opener=xr.open_rasterio
     A=opener(ARG.inputfile).loc[:,north:south,west:east]
+    
+    if ARG.mask:
+        BDGBM=HarmBayMod(A, reformat_dict={"nan":-32768,"maxvalues":10000}, bandNameFormatter=lambda y:pd.Series([pd.to_datetime(x.split("_")[0]) for x in y]))
+        import geopandas as gpd
+        import salem
+        V=gpd.read_file(ARG.mask)
+        Z=BDGBM.RawData.salem.grid.region_of_interest(geometry=V.geometry[0])
+        A=BDGBM.RawData.where(Z)
     print(A)
     Time, Y, X=A.dims
     if ARG.dask:

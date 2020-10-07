@@ -23,6 +23,17 @@
       "valueSchema": "bbox"
     },
     {
+      "id": "mask",
+      "inputType": "individual",
+      "valueType": "value",
+      "description": "OGR vectorial file to indicate the Region Of Interest, first element only would used. It is expected a polyline",
+      "name": "Vector to select ROI",
+      "obligation": false,
+      "hasDefault": true,
+      "defaultValue": false,
+      "valueSchema": "url"
+    },
+    {
       "id": "change",
       "inputType": "individual",
       "valueType": "value",
