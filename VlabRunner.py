@@ -8,12 +8,21 @@ print(os.listdir("./"))
 #subprocess.run(["unzip","./DataInput/"]+os.listdir("./DataInput")[0])
 subprocess.run(["unzip","DataInput.zip", "-d","./DataInput"])
 print(os.listdir("./"))
+
 try:
     inputfile=[ x for x in os.listdir("./DataInput") if x.split(".")[-1].lower() in ["tif", "tiff", "nc","envi"]][0]
 except IndexError:
     print("Input file should have extension name tif, nc or envi")
 
 ARG=json.load(open("vlabparams.json","r"))
+if "mask.zip" in os.listdir("./"):
+    subprocess.run(["unzip","mask.zip","-d","./MASK"])
+    L=os.listdir("./MASK")
+    if len(L)==1:
+        path=L[0]
+    else:
+        path=[ x for x in L if x.split(".")[-1].lower() in ["envi","shp"]][0]
+    ARG["mask"]=path
 print("ARG")
 print(ARG)
 arg=""
