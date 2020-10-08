@@ -1191,7 +1191,7 @@ if "__main__"==__name__:
         VV=V.to_crs(BDGBM.RawData.pyproj_srs)
         BB=VV.bounds
         Z=BDGBM.RawData.salem.grid.region_of_interest(geometry=V.geometry[0])
-        Z=Z.loc[BB.maxy[0]:BB.miny[0],BB.minx[0]:BB.maxx[0]]
+        Z=Z[BB.maxy[0]:BB.miny[0],BB.minx[0]:BB.maxx[0]]
         A=A.loc[:,BB.maxy[0]:BB.miny[0],BB.minx[0]:BB.maxx[0]].where(Z)
     
     #chunking if needed
