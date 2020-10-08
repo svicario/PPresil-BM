@@ -111,15 +111,6 @@
       "name": "Output image",
       "valueSchema": "url",
       "target": "./Output.zip"
-    },
-    {
-      "id": "GraphicOutput",
-      "outputType": "individual",
-      "valueType": "value",
-      "description": "Output image in ENVI format showing Time Series Statistics. First 3 layers are the Ecological Functional Attributes.\\n pvalue and Rsq are the significance and the explained variance of the Harmonic model. Liupvalue is the probability that the residual have autocorrelated signal",
-      "name": "Output image",
-      "valueSchema": "wms",
-      "value": {"url":"http://90.147.170.84/","name":"/map/Mean.map","protocol":"urn:ogc:serviceType:WebMapService:1.1.1:HTTP" }
     }
   ]
 }
