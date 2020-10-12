@@ -39,7 +39,7 @@ print(arg)
 subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
 
 D="""{"url":"http://90.147.170.84/cgi-bin/mapserv?map=/map/MeanMulti.map","name":"MeanMultiVI_2","protocol":"urn:ogc:serviceType:WebMapService:1.1.1:HTTP" }"""
-handle=open("WMS.json","r")
+handle=open("WMS.json","w")
 handle.write(D)
 handle.close()
 subprocess.run(["zip","Output.zip",ARG["suffix"]+".nc"])
