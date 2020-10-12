@@ -42,5 +42,6 @@ D="""{"url":"http://90.147.170.84/cgi-bin/mapserv?map=/map/MeanMulti.map","name"
 handle=open("WMS.json","w")
 handle.write(D)
 handle.close()
+print(open("WMS.json","r").read())
 subprocess.run(["zip","Output.zip",ARG["suffix"]+".nc"])
 
