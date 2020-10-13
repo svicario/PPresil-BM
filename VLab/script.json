@@ -7,7 +7,7 @@
     },
     {
       "repoPath":"paletteViridis.csv",
-      "target":"paletteViridis.csv",
+      "targetPath":"paletteViridis.csv",
       "pathType": "FILE"
     },
     {
