@@ -57,13 +57,15 @@ subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]
 #WMS
 import xarray as xr
 A=xr.open_dataset(ARG["suffix"]+".nc")
-Max,Min=A.sdinter_mean.quantile(q=[0.05,0.975]).values
-bins=100
-Z=(pd.DataFrame(sns.color_palette("viridis", bins))*255).astype("int")
-Z[3]=255
-Z["V"]=np.linspace(Min,Max,bins)
-Z.loc[100,:]=[0,0,0,0,-9999]
-Z[["V",0,1,2,3]].to_csv("paletteViridis.csv", index=False, header=False)
+A["sdinter_mean"]*=1000
+A["sdinter_mean"]=A["sdinter_mean"]
+A["sdinter_mean"].to_netcdf(ARG["suffix"]+"sdinter_mean.nc")
+Min,Max=A.sdinter_mean.quantile(q=[0.05,0.975]).values
+bins=10
+Z=pd.read_csv("paletteViridis.csv", header=None)
+Z[0]=np.linspace(Min,Max,bins)
+Z.to_csv("paletteViridisMod.csv", index=False, header=False)
+
 
 CMD="gdaldem color-relief -alpha -nearest_color_entry NETCDF:{suffix}.nc:sdinter_mean paletteViridis.csv {suffix}sdinter_mean.png".format(suffix=ARG["suffix"])
 subprocess.run(CMD.split())
