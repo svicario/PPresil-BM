@@ -36,12 +36,56 @@ for k,v in ARG.items():
 
 print("arguments")
 print(arg)
+arg=""
+for k,v in ARG.items():
+    if (v is False)|(v in ["False","false","F"]):
+        continue
+    else:
+        if (v is True)|(v=="true"):
+            v=""
+        arg+=" --"+" ".join([k,str(v)])
+
+print("arguments")
+print(arg)
+
+
 subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
 
-D="""{"url":"http://90.147.170.84/cgi-bin/mapserv?map=/map/MeanMulti.map","name":"MeanMultiVI_2","protocol":"urn:ogc:serviceType:WebMapService:1.1.1:HTTP" }"""
-handle=open("WMS.json","w")
-handle.write(D)
-handle.close()
-print(open("WMS.json","r").read())
-subprocess.run(["zip","Output.zip",ARG["suffix"]+".nc"])
 
+#WMS
+import xarray as xr
+A=xr.open(ARG["suffix"]+".nc")
+Max,Min=A.sdinter_mean.quantile(q=[0.05,0.975]).values
+bins=100
+Z=(pd.DataFrame(sns.color_palette("viridis", bins))*255).astype("int")
+Z[3]=255
+Z["V"]=np.linspace(Min,Max,bins)
+Z.loc[100,:]=[0,0,0,0,-9999]
+Z[["V",0,1,2,3]].to_csv("paletteViridis.csv", index=False, header=False)
+
+CMD="gdaldem color-relief -alpha -nearest_color_entry NETCDF:{suffix}.nc:sdinter_mean paletteViridis.csv {suffix}sdinter_mean.png".format(suffix=ARG["suffix"])
+subprocess.run(CMD.split())
+
+#CMD="rgb2pct.py {suffix}sdinter_mean.png {suffix}sdinter_mean_pct.png".format(suffix=ARG["suffix"])
+#subprocess.run(CMD.split())
+#gdalwarp -s_srs_
+#subprocess.run(["gdal_translate", 'NETCDF:'+ARG["suffix"]+".nc:sdinter_mean", ARG["suffix"]+"sdinter_mean.tif"])
+
+
+
+
+subprocess.run(["gdal2tiles.py", "-z","2-14", "-c", "CNR-IIA/vicario 2020", "-s",  A.pyproj_srs, ARG["suffix"]+"sdinter_mean.png"])
+
+
+ID=os.environ['BENGINERUNID']
+print(ID)
+CMD='/root/.local/bin/aws s3 sync {suffix}sdinter_mean s3://testtilebucket/{ID}{V1}/3857 --acl public-read'.format(ID=ID, V1="V1",suffix=ARG["suffix"])
+subprocess.run(CMD.split())
+
+D={"url":"https://eddipf6en8.execute-api.us-east-1.amazonaws.com/alpha/wms?", "protocol":"urn:ogc:serviceType:WebMapService:1.1.1:HTTP", "name":ID+"V1"} 
+with open('wms.json', 'w') as outfile:
+    json.dump(D, outfile)
+
+print(D)
+
+subprocess.run(["zip","Output.zip",ARG["suffix"]+".nc"])
