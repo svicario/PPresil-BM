@@ -21,5 +21,8 @@ RUN apt-get update && \
     pip3 install netcdf4 && \
     pip3 install geopandas && \
     pip3 install salem && \
+
     apt-get install -y zip && \
-    apt-get install -y unzip
+    apt-get install -y unzip && \
+    apt-get install -y gdal-bin && \
+    apt-get install -y awscli
