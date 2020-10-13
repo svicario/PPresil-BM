@@ -1199,7 +1199,7 @@ if "__main__"==__name__:
     if ARG.dask:
         DICT={Time:-1,Y:ARG.Step,X:ARG.Step}
         A=A.chunk(DICT)
-    print(A)
+    #print(A)
     
     if ARG.n is not None:
         from itertools import count, product

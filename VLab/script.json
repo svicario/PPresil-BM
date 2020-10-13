@@ -6,6 +6,11 @@
       "pathType": "FILE"
     },
     {
+      "repoPath":"paletteViridis.csv",
+      "target":"paletteViridis.csv",
+      "pathType": "FILE"
+    },
+    {
       "repoPath": "PPresilBayes.py",
       "targetPath": "PPresilBayes.py",
       "pathType": "FILE"
