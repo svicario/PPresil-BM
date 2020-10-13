@@ -54,7 +54,7 @@ subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]
 
 #WMS
 import xarray as xr
-A=xr.open(ARG["suffix"]+".nc")
+A=xr.open_dataset(ARG["suffix"]+".nc")
 Max,Min=A.sdinter_mean.quantile(q=[0.05,0.975]).values
 bins=100
 Z=(pd.DataFrame(sns.color_palette("viridis", bins))*255).astype("int")
