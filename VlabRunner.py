@@ -67,7 +67,7 @@ Z[0]=np.linspace(Min,Max,bins).astype("int")
 Z.to_csv("paletteViridisMod.csv", index=False, header=False)
 
 
-CMD="gdaldem color-relief -alpha -nearest_color_entry NETCDF:{suffix}.nc:sdinter_mean paletteViridis.csv {suffix}sdinter_mean.png".format(suffix=ARG["suffix"])
+CMD="gdaldem color-relief -alpha -nearest_color_entry NETCDF:{suffix}sdinter_mean.nc:sdinter_mean paletteViridis.csv {suffix}sdinter_mean.png".format(suffix=ARG["suffix"])
 subprocess.run(CMD.split())
 
 #CMD="rgb2pct.py {suffix}sdinter_mean.png {suffix}sdinter_mean_pct.png".format(suffix=ARG["suffix"])
