@@ -23,21 +23,22 @@ if "mask.zip" in os.listdir("./"):
     try:
         L=os.listdir("./MASK")
     except FileNotFoundError:
-        ARG["mask"]="false"
-        break
+        path=None
+        ARG["mask"]=False
     else:
         if len(L)==1:
             path="./MASK/"+L[0]
         else:
             path="./MASK/"+[ x for x in L if x.split(".")[-1].lower() in ["envi","shp"]][0]
-    try:
-        V=gpd.read_file(path)
-    except Exception as inst:
-        if str(type(inst))!="<class 'fiona.errors.DriverError'>":
-            raise(KeyError)
-        ARG["mask"]="false"
-    else:
-        ARG["mask"]=path
+    if path:
+        try:
+            V=gpd.read_file(path)
+        except Exception as inst:
+            if str(type(inst))!="<class 'fiona.errors.DriverError'>":
+                raise(KeyError)
+            ARG["mask"]="false"
+        else:
+            ARG["mask"]=path
 print("ARG")
 print(ARG)
 arg=""
