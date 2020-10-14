@@ -19,8 +19,11 @@ except IndexError:
 ARG=json.load(open("vlabparams.json","r"))
 if "mask.zip" in os.listdir("./"):
     subprocess.run(["unzip","mask.zip","-d","./MASK"])
-    L=os.listdir("./MASK")
-    if len(L)==1:
+    try:
+        L=os.listdir("./MASK")
+    except FileNotFoundError:
+        ARG["mask"]="false"
+    elif len(L)==1:
         path="./MASK/"+L[0]
     else:
         path="./MASK/"+[ x for x in L if x.split(".")[-1].lower() in ["envi","shp"]][0]
