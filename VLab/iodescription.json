@@ -30,7 +30,7 @@
       "name": "Vector to select ROI",
       "obligation": false,
       "hasDefault": true,
-      "defaultValue": false,
+      "defaultValue": "http://cloud.recas.ba.infn.it:8080/v1/AUTH_fb6d6fcd0e194a96bb6d0420dce8332f/backgroundinfo/BBfileDefault.txt",
       "valueSchema": "url",
       "target": "mask.zip"
     },
