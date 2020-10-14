@@ -57,8 +57,8 @@ subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]
 #WMS
 import xarray as xr
 A=xr.open_dataset(ARG["suffix"]+".nc")
-A["sdinter_mean"]*=1000
-A["sdinter_mean"]=A["sdinter_mean"]
+A["sdinter_mean"]*=10000
+A["sdinter_mean"]=A["sdinter_mean"].astype("int16")
 A["sdinter_mean"].to_netcdf(ARG["suffix"]+"sdinter_mean.nc")
 Min,Max=A.sdinter_mean.quantile(q=[0.05,0.975]).values
 bins=10
