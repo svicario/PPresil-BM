@@ -1,5 +1,5 @@
 {
-  "image": "ilsanto/test_ppresil:2",
+  "image": "ilsanto/test_ppresil:5",
   "privateimage":true,
   "resources": {
     "memory_mb": "5000",
