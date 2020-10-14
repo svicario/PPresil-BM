@@ -24,6 +24,7 @@ if "mask.zip" in os.listdir("./"):
         L=os.listdir("./MASK")
     except FileNotFoundError:
         ARG["mask"]="false"
+        break
     else:
         if len(L)==1:
             path="./MASK/"+L[0]
