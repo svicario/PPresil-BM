@@ -63,7 +63,7 @@ A["sdinter_mean"].to_netcdf(ARG["suffix"]+"sdinter_mean.nc")
 Min,Max=A.sdinter_mean.quantile(q=[0.05,0.975]).values
 bins=10
 Z=pd.read_csv("paletteViridis.csv", header=None)
-Z[0]=np.linspace(Min,Max,bins)
+Z[0]=np.linspace(Min,Max,bins).astype("int")
 Z.to_csv("paletteViridisMod.csv", index=False, header=False)
 
 
