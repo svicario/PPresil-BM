@@ -2,7 +2,7 @@
   "image": "ilsanto/test_ppresil:5",
   "privateimage":true,
   "resources": {
-    "memory_mb": "5000",
+    "memory_mb": "16000",
     "cpu_units": ""
 	},
   "container": {
