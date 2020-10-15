@@ -101,6 +101,23 @@ CMD='/root/.local/bin/aws s3 sync {suffix}sdinter_mean s3://testtilebucket/{ID}{
 subprocess.run(CMD.split())
 
 D={"url":"https://eddipf6en8.execute-api.us-east-1.amazonaws.com/alpha/wms?", "protocol":"urn:ogc:serviceType:WebMapService:1.1.1:HTTP", "name":ID+"V1"} 
+#Putting the legend on the map
+Z[0]/=10000
+Ra=pd.DataFrame()
+Ra["U"]=Z.iloc[:,0].diff()[1:]/2+Z.iloc[:-1,0].values
+Ra["L"]=Z.iloc[:,0].diff()[:-1]/2+Z.iloc[:-1,0].values
+#Ra.index=Ra.index.astype("str")
+Ra.loc[0,["U","L"]]=[np.nan,Ra.iloc[0,0]]
+Ra=Ra.sort_index()
+Ra=Ra.join(Z)
+def Form(x):
+    temp={'type': 'square', 'color': 'rgba(72,33,114,255)', 'text': '0 - 59' }
+    #print(x)
+    temp["text"]='{:.2e} - {:.2e}'.format(x.values[0],x.values[1])
+    temp['color']='rgba({0},{1},{2},{3})'.format(*x[-4:])
+    return temp
+Legend=list(Ra.apply(lambda x: Form(x), axis=1))
+D["legendList"]=Legend
 with open('wms.json', 'w') as outfile:
     json.dump(D, outfile)
 
