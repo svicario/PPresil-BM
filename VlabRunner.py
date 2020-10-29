@@ -67,10 +67,10 @@ print(arg)
 process = subprocess.Popen(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(), stdout=subprocess.PIPE)
 while True:
     output = process.stdout.readline()
-    if output == '' and process.poll() is not None:
+    if output == b'' and process.poll() is not None:
         break
     if output:
-        print output.strip()
+        print( output.strip())
 rc = process.poll()
 #subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
 
