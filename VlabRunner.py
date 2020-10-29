@@ -64,8 +64,15 @@ for k,v in ARG.items():
 print("arguments")
 print(arg)
 
-
-subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
+process = subprocess.Popen(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(), stdout=subprocess.PIPE)
+while True:
+    output = process.stdout.readline()
+    if output == '' and process.poll() is not None:
+        break
+    if output:
+        print output.strip()
+rc = process.poll()
+#subprocess.run(["python3", "PPresilBayes.py","--input","./DataInput/"+inputfile]+arg.split(),stdout=subprocess.PIPE).stdout
 
 
 #WMS
