@@ -10,6 +10,9 @@ RUN apt-get install -y software-properties-common
 RUN add-apt-repository -y ppa:ubuntugis/ppa
 RUN apt-get update
     #apt-get install -y gdal-bin=2.2.2+dfsg-1~xenial1 python3-gdal=2.2.2+dfsg-1~xenial1 &&\
+ARG DEBIAN_FRONTEND=noninteractive
+ENV TZ=Europe
+RUN apt-get install -y tzdata
 RUN pip3 install pandas && \
     pip3 install scipy && \
     pip3 install numpy && \
